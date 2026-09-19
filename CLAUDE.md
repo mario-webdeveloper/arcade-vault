@@ -10,17 +10,19 @@ Arcade Vault: online games platform where players compete for highest score (REA
 
 README says the project follows spec-driven development via `/spec` and `/spec-impl` skills from `Klerith/fernando-skills` (`npx skills@latest add Klerith/fernando-skills`). No `spec/` dir or skills are installed yet.
 
-## Commands
-
-```bash
-npm run dev      # dev server, http://localhost:3000
-npm run build    # production build
-npm run start    # serve production build
-npm run lint     # eslint (flat config; calls `eslint` directly, not `next lint`)
-npx tsc --noEmit # typecheck
-```
-
 No test runner is configured.
+
+## Skills
+
+Para cualquier tarea relacionada con diseño, rediseño o implementación de interfaces de usuario, aplica obligatoriamente las skills correspondientes.
+
+- **Diseño UI/UX:** usa siempre `frontend-design` y `ui-ux-pro-max` antes de crear o modificar una interfaz. Aplícalas para definir estructura visual, jerarquía, layout, componentes, estilos, responsive design, accesibilidad y experiencia de usuario.
+
+- **Referencias visuales:** si el usuario proporciona una captura de pantalla, mockup, diseño de referencia o describe una interfaz que desea recrear o mejorar, usa `frontend-design` y `ui-ux-pro-max` para analizarla y convertirla en una propuesta de UI coherente con el proyecto.
+
+- **React / Next.js:** cuando crees, modifiques, refactorices u optimices código React o Next.js (`.tsx`, `.jsx`, componentes, layouts, páginas, etc.), usa siempre `vercel-react-best-practices`.
+
+Estas skills deben aplicarse de forma proactiva cuando la tarea corresponda a su ámbito, aunque el usuario no las mencione explícitamente.
 
 ## Stack notes
 

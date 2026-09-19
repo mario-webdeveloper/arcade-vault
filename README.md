@@ -13,4 +13,15 @@ https://github.com/Klerith/fernando-skills
 
 ```bash
 npx skills@latest add Klerith/fernando-skills
+
+```
+## Commands 
+
+```bash
+npm run dev      # dev server, http://localhost:3000
+npm run build    # production build
+npm run start    # serve production build
+npm run lint     # eslint (flat config; calls `eslint` directly, not `next lint`)
+npx tsc --noEmit # typecheck
+```
 ```

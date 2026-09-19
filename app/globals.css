@@ -1,26 +1,311 @@
 @import "tailwindcss";
 
+/* references/ holds design prototypes (JSX/HTML), not app source */
+@source not "../references";
+
+/* ===== ARCADE VAULT — global theme =====
+   Source of truth: references/templates/styles.css
+   Only tokens, base, page frame and reusable primitives live here.
+   Page/component styles (nav, cards, covers, detail, player, modal,
+   auth, hall...) stay next to their components. */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0a0a0f;
+  --bg-2: #0f0f18;
+  --bg-3: #15151f;
+  --ink: #e6e9ff;
+  --ink-dim: #8a8fb5;
+  --ink-faint: #4a4f70;
+  --cyan: #00f5ff;
+  --magenta: #ff006e;
+  --yellow: #f5ff00;
+  --green: #00ff88;
+  --gold: #ffcf3a;
+  --silver: #c7d0e0;
+  --bronze: #d97a3a;
+  --line: rgba(0, 245, 255, 0.18);
+  --line-2: rgba(255, 255, 255, 0.06);
+  /* --font-* are set by next/font on <html> (see app/layout.tsx) */
+  --pixel: var(--font-press-start), system-ui, monospace;
+  --mono: var(--font-jetbrains-mono), "Courier Prime", "Courier New", monospace;
+  color-scheme: dark;
 }
 
+/* Expose tokens to Tailwind: text-cyan, bg-bg-2, border-line, font-pixel... */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-bg-3: var(--bg-3);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-ink-faint: var(--ink-faint);
+  --color-cyan: var(--cyan);
+  --color-magenta: var(--magenta);
+  --color-yellow: var(--yellow);
+  --color-green: var(--green);
+  --color-gold: var(--gold);
+  --color-silver: var(--silver);
+  --color-bronze: var(--bronze);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --font-pixel: var(--pixel);
+  --font-mono: var(--mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ===== base ===== */
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ===== keyframes ===== */
+@keyframes gridscroll {
+  to { background-position: 0 60px, 0 60px; }
+}
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.35; }
+}
+/* renamed from "pulse": clashes with Tailwind's built-in pulse keyframes */
+@keyframes btn-pulse {
+  0%, 100% { box-shadow: 0 0 0 transparent, inset 0 0 0 transparent; }
+  50% { box-shadow: 0 0 20px var(--cyan), inset 0 0 12px rgba(0, 245, 255, 0.45); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes spinpix {
+  to { transform: rotate(360deg); }
+}
+
+@layer components {
+  /* ===== background: perspective grid + scanlines + vignette ===== */
+  .av-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(255, 0, 110, 0.08), transparent 60%),
+      radial-gradient(120% 80% at 50% 100%, rgba(0, 245, 255, 0.10), transparent 60%),
+      var(--bg);
+  }
+  .av-bg::before {
+    /* perspective floor grid */
+    content: "";
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
+    height: 70%;
+    background:
+      linear-gradient(to right, rgba(0, 245, 255, 0.22) 1px, transparent 1px) 0 0 / 60px 60px,
+      linear-gradient(to bottom, rgba(0, 245, 255, 0.22) 1px, transparent 1px) 0 0 / 60px 60px;
+    transform: perspective(600px) rotateX(60deg);
+    transform-origin: center bottom;
+    mask-image: linear-gradient(to top, black 0%, transparent 90%);
+    animation: gridscroll 8s linear infinite;
+    opacity: 0.55;
+  }
+  .av-bg::after {
+    /* scanlines */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.03) 0 1px,
+      transparent 1px 3px
+    );
+    mix-blend-mode: overlay;
+    opacity: 0.6;
+  }
+
+  .av-noise {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1   0 0 0 0 1   0 0 0 0 1   0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.35;
+  }
+
+  /* ===== app frame (was #root) ===== */
+  .av-app {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+  .av-main {
+    flex: 1;
+  }
+
+  /* ===== generic neon button ===== */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    font-family: var(--pixel);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--cyan);
+    box-shadow: 0 0 0 transparent, inset 0 0 0 transparent;
+    cursor: pointer;
+    transition: transform 80ms ease, box-shadow 160ms ease, color 160ms;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  }
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border: 1px solid rgba(0, 245, 255, 0.25);
+    pointer-events: none;
+    clip-path: inherit;
+  }
+  .btn:hover {
+    color: var(--cyan);
+    box-shadow: 0 0 14px rgba(0, 245, 255, 0.55), inset 0 0 8px rgba(0, 245, 255, 0.35);
+  }
+  .btn:active {
+    transform: translateY(1px) scale(0.98);
+  }
+  /* clip-path hides an outside outline: draw the focus ring inside the border box */
+  .btn:focus-visible {
+    outline-offset: -6px;
+  }
+
+  .btn.magenta { border-color: var(--magenta); }
+  .btn.magenta:hover { color: var(--magenta); box-shadow: 0 0 14px rgba(255, 0, 110, 0.55), inset 0 0 8px rgba(255, 0, 110, 0.35); }
+  .btn.magenta:focus-visible { outline-color: var(--magenta); }
+  .btn.yellow { border-color: var(--yellow); }
+  .btn.yellow:hover { color: var(--yellow); box-shadow: 0 0 14px rgba(245, 255, 0, 0.6), inset 0 0 8px rgba(245, 255, 0, 0.35); }
+  .btn.yellow:focus-visible { outline-color: var(--yellow); }
+  .btn.ghost { border-color: var(--ink-faint); color: var(--ink-dim); }
+  .btn.ghost:hover { color: var(--ink); border-color: var(--ink-dim); box-shadow: none; }
+  .btn.ghost:focus-visible { outline-color: var(--ink-dim); }
+  .btn.lg { padding: 16px 28px; font-size: 12px; }
+  .btn.xl { padding: 20px 36px; font-size: 14px; letter-spacing: 0.2em; }
+  .btn.pulse { animation: btn-pulse 1.6s ease-in-out infinite; }
+
+  /* ===== chip (filter / tab pill) ===== */
+  .chip {
+    padding: 12px 14px;
+    font-family: var(--pixel);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    cursor: pointer;
+  }
+  .chip.active { color: var(--magenta); border-color: var(--magenta); box-shadow: 0 0 10px rgba(255, 0, 110, 0.35); }
+  .chip:hover:not(.active) { color: var(--ink); }
+
+  /* ===== form field ===== */
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .field label { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.16em; }
+  .field input {
+    height: 44px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 0 12px;
+    outline: 0;
+    font-family: var(--mono);
+    transition: border-color 140ms, box-shadow 140ms;
+  }
+  .field input:focus { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0, 245, 255, 0.35); }
+}
+
+/* ===== utilities (emitted only when used) ===== */
+@utility pixel {
+  font-family: var(--pixel);
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+@utility neon-cyan {
+  color: var(--cyan);
+  text-shadow: 0 0 6px rgba(0, 245, 255, 0.65), 0 0 16px rgba(0, 245, 255, 0.45);
+}
+@utility neon-magenta {
+  color: var(--magenta);
+  text-shadow: 0 0 6px rgba(255, 0, 110, 0.65), 0 0 16px rgba(255, 0, 110, 0.45);
+}
+@utility neon-yellow {
+  color: var(--yellow);
+  text-shadow: 0 0 6px rgba(245, 255, 0, 0.7), 0 0 16px rgba(245, 255, 0, 0.4);
+}
+@utility neon-green {
+  color: var(--green);
+  text-shadow: 0 0 6px rgba(0, 255, 136, 0.6), 0 0 16px rgba(0, 255, 136, 0.35);
+}
+
+@utility flicker {
+  animation: flicker 5s infinite steps(1, end);
+}
+@utility fade-in {
+  animation: fadeIn 240ms ease-out;
+}
+@utility slide-in {
+  animation: slideIn 260ms ease-out;
+}
+
+@utility divider {
+  height: 1px;
+  background: var(--line);
+  margin: 8px 0;
+}
+
+@utility spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: spinpix 0.6s steps(8) infinite;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+/* decorative motion off; .spinner keeps spinning (it signals loading) */
+@media (prefers-reduced-motion: reduce) {
+  .av-bg::before,
+  .btn.pulse,
+  .flicker,
+  .fade-in,
+  .slide-in {
+    animation: none;
+  }
 }
