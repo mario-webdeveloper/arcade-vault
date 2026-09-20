@@ -1,6 +1,6 @@
 # SPEC 03 — Acerca de y Contacto con envío real por Resend
 
-> **Estado:** aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01, SPEC 02
 > **Fecha:** 2026-09-20
 > **Objetivo:** Añadir `/acerca` —misión, pilares, estado honesto del proyecto y un formulario de contacto que envía correos reales con Resend— y un cuarto enlace en la barra.
