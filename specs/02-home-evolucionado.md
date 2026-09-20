@@ -1,6 +1,6 @@
 # SPEC 02 — Home evolucionado: landing del Vault
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01
 > **Fecha:** 2026-09-20
 > **Objetivo:** Convertir `/` en una landing de cinco bloques derivada del prototipo `references/templates/home-about/`, moviendo la Biblioteca a `/biblioteca`.
