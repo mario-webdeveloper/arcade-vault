@@ -124,6 +124,13 @@
 @keyframes drift {
   50% { transform: translate(20px, 10px); }
 }
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+@keyframes pulse-led {
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
 
 @layer components {
   /* ===== background: perspective grid + scanlines + vignette ===== */
@@ -526,6 +533,39 @@
     box-shadow: 0 0 8px var(--yellow);
     animation: drift 2.8s ease-in-out infinite;
   }
+
+  /* ===== Home hero: 3 floating silhouettes behind the CRT cabinet =====
+     Markup in components/home-hero.tsx. .home-silos fills a `position: relative`
+     parent; the hero must clip horizontal overflow (they peek out of the cabinet). */
+  .home-silos {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .home-silos .silo {
+    position: absolute;
+    filter: drop-shadow(0 0 10px currentColor);
+    image-rendering: pixelated;
+    animation: float 6s ease-in-out infinite;
+  }
+  .home-silos .s1 { top: -9%; left: -4%; width: 80px; color: var(--cyan); }
+  .home-silos .s2 { top: 16%; right: -4%; width: 72px; color: var(--magenta); animation-delay: -2s; }
+  .home-silos .s3 { bottom: -8%; left: 8%; width: 88px; color: var(--yellow); animation-delay: -4s; }
+
+  /* ===== scroll reveal (Home) =====
+     components/scroll-reveal.tsx marks each below-the-fold [data-reveal] element
+     "pending" after mount and flips it to "in" once it scrolls into view. CSS alone
+     never hides anything, so no JS, failed JS and reduced motion all show the content. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      transition: opacity 600ms ease, transform 600ms ease;
+    }
+    [data-reveal="pending"] {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
 }
 
 /* ===== utilities (emitted only when used) ===== */
@@ -558,6 +598,9 @@
 }
 @utility blink {
   animation: blink 1.2s steps(1, end) infinite;
+}
+@utility led-pulse {
+  animation: pulse-led 2.4s ease-in-out infinite;
 }
 /* staggered row entrance: `both` keeps rows hidden during their delay, and
    visible once the animation is turned off (reduced motion) */
@@ -597,13 +640,15 @@
   .btn.pulse,
   .flicker,
   .blink,
+  .led-pulse,
   .typewriter,
   .rise,
   .fade-in,
   .slide-in,
   .game-arena .grid-floor,
   .game-arena .player-ship,
-  .game-arena .enemy {
+  .game-arena .enemy,
+  .home-silos .silo {
     animation: none;
   }
 }
