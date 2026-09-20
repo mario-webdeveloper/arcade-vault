@@ -275,4 +275,5 @@ Frontera Server/Client: las `page.tsx` son Server Components y el estado baja a 
 - Filtros o pestañas sincronizados con la URL.
 - Tests automatizados.
 
+
 Cada uno de ellos, si entra, va en su propio spec.
