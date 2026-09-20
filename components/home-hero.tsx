@@ -64,7 +64,7 @@ const SILHOUETTES = (
 export function HomeHero() {
   return (
     <section className="overflow-x-clip">
-      <div className="mx-auto grid min-h-[78svh] max-w-[1320px] items-center gap-12 px-4 pt-10 pb-14 min-[721px]:px-8 min-[900px]:grid-cols-[1.05fr_1fr] min-[900px]:py-16">
+      <div className="mx-auto grid min-h-[78svh] max-w-[1320px] items-center gap-16 px-4 pt-10 pb-20 min-[721px]:gap-20 min-[721px]:px-8 min-[900px]:grid-cols-[1.05fr_1fr] min-[900px]:gap-12 min-[900px]:py-16">
         <div className="min-w-0">
           <p className="neon-yellow mb-6 font-pixel text-[11px] uppercase leading-[1.25] tracking-[0.24em]">
             <span aria-hidden="true">▸ </span>

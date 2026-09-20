@@ -534,14 +534,18 @@
     animation: drift 2.8s ease-in-out infinite;
   }
 
-  /* ===== Home hero: 3 floating silhouettes behind the CRT cabinet =====
+  /* ===== Home hero: 3 floating silhouettes around the CRT cabinet =====
      Markup in components/home-hero.tsx. .home-silos fills a `position: relative`
-     parent; the hero must clip horizontal overflow (they peek out of the cabinet). */
+     parent and sits in front of the cabinet. Each silhouette hangs over the
+     cabinet's top or bottom edge, overlapping it by less than the CRT padding
+     (16px / 24px) so it never covers the marquee, the screen or the status row.
+     `float` also lifts each one 14px, so the offsets leave that much spare. */
   .home-silos {
     position: absolute;
     inset: 0;
+    z-index: 2;
     pointer-events: none;
-    opacity: 0.55;
+    opacity: 0.9;
   }
   .home-silos .silo {
     position: absolute;
@@ -549,9 +553,14 @@
     image-rendering: pixelated;
     animation: float 6s ease-in-out infinite;
   }
-  .home-silos .s1 { top: -9%; left: -4%; width: 80px; color: var(--cyan); }
-  .home-silos .s2 { top: 16%; right: -4%; width: 72px; color: var(--magenta); animation-delay: -2s; }
-  .home-silos .s3 { bottom: -8%; left: 8%; width: 88px; color: var(--yellow); animation-delay: -4s; }
+  .home-silos .s1 { top: -42px; left: 6%; width: 68px; color: var(--cyan); }
+  .home-silos .s2 { top: -46px; right: 9%; width: 60px; color: var(--magenta); animation-delay: -2s; }
+  .home-silos .s3 { bottom: -70px; right: 38%; width: 72px; color: var(--yellow); animation-delay: -4s; }
+  @media (min-width: 721px) {
+    .home-silos .s1 { top: -50px; width: 84px; }
+    .home-silos .s2 { top: -56px; width: 76px; }
+    .home-silos .s3 { bottom: -62px; width: 80px; }
+  }
 
   /* ===== scroll reveal (Home) =====
      components/scroll-reveal.tsx marks each below-the-fold [data-reveal] element

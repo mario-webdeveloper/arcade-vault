@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Arcade Vault: online games platform where players compete for highest score (README is in Spanish). Current state: the visual MVP from `specs/01-mvp-pantallas-visuales.md` — five screens ported from the prototype in `references/templates/`, with mock data and a fake session. **No playable game, backend, real auth or real rankings yet.**
+Arcade Vault: online games platform where players compete for highest score (README is in Spanish). Current state: the visual MVP from `specs/01-mvp-pantallas-visuales.md` — five screens ported from the prototype in `references/templates/` — plus the landing from `specs/02-home-evolucionado.md` (Home at `/`, catalog moved to `/biblioteca`), with mock data and a fake session. **No playable game, backend, real auth or real rankings yet.**
 
 Spec-driven development: specs live in `specs/` and are written/implemented with the `/spec` and `/spec-impl` skills (`.claude/skills/`, from `Klerith/fernando-skills`). `/spec-impl` works on a `spec-NN-slug` branch and never commits on its own. New behavior goes in a new spec, not in code by surprise.
 
@@ -16,7 +16,8 @@ No test runner is configured.
 
 | Route | File | Screen |
 | --- | --- | --- |
-| `/` | `page.tsx` | Library: hero + `LibraryBrowser` (search accent-insensitive, category chips) |
+| `/` | `page.tsx` | Home landing: hero with CRT cabinet, figures strip, why, featured games (`FEATURED`), activity (demo data), closing (FAQ + `$0` + final CTA). Sections below the hero reveal on scroll |
+| `/biblioteca` | `biblioteca/page.tsx` | Library: hero + `LibraryBrowser` (search accent-insensitive, category chips) |
 | `/juego/[id]` | `juego/[id]/page.tsx` | Game detail + leaderboard. `generateStaticParams` for the 8 ids, `notFound()` otherwise |
 | `/juego/[id]/jugar` | `juego/[id]/jugar/page.tsx` | Player: decorative CRT, simulated score, pause, game-over dialog |
 | `/acceso` | `acceso/page.tsx` | Fake sign-in: any username works, social buttons are disabled |
@@ -25,16 +26,19 @@ No test runner is configured.
 
 `page.tsx` files are Server Components (no `'use client'`); state lives in the leaf components below. `app/layout.tsx` mounts `SessionProvider`, `SiteNav` and `SiteFooter` around `<main className="av-main">`.
 
+Naming convention: **"VAULT" is the catalog.** Every "back" link and redirect (detail, hall, 404, game-over dialog, sign-in) goes to `/biblioteca`; only the nav logo goes to `/`.
+
 ### Components (`components/`)
 
 Imported by direct path (`@/components/...`); there are no barrel files. `'use client'` only where needed.
 
-- Client: `session-provider` (context: `user`, `signIn`, `signOut`, `saveScore`; also exports `useSession`), `site-nav` (sticky bar + mobile panel, active link from `usePathname()`), `game-card` (whole card is one `<Link>`, pointer tilt), `library-browser`, `game-player`, `game-over-dialog` (focus trap, no Esc), `auth-form`, `hall-of-fame`.
-- Server: `site-footer`, `game-cover` (CSS-art cover from `Game.cover`), `leaderboard`.
+- Client: `session-provider` (context: `user`, `signIn`, `signOut`, `saveScore`; also exports `useSession`), `site-nav` (sticky bar + mobile panel, active link from `usePathname()`; Inicio / Biblioteca / Salón, full bar from 1200px, hamburger below), `game-card` (whole card is one `<Link>`, pointer tilt), `library-browser`, `game-player`, `game-over-dialog` (focus trap, no Esc), `auth-form`, `hall-of-fame`, `home-hero-ctas` (second hero button follows the session), `scroll-reveal` (the only scroll island: after mount marks below-the-fold `[data-reveal]` elements `pending`, then `in` when visible; `globals.css` hides only `pending`, under `prefers-reduced-motion: no-preference`, so no JS / reduced motion shows everything).
+- Server: `site-footer`, `game-cover` (CSS-art cover from `Game.cover`), `leaderboard`, and the Home blocks: `home-hero` (copy + 3 floating silhouettes + cabinet), `home-cabinet` (decorative CRT reusing `.crt` / `.game-arena`), `home-stats`, `home-features`, `home-activity`, `home-closing`, plus the reusable `section-head` (kicker + `<h2>` + rule) and `pixel-icon`. The featured-games section is inline in `app/page.tsx`.
 
 ### Data (`lib/`)
 
 - `games.ts`: `Game` type, `GAMES` (8), `CATS`, `getGame(id)`.
+- `home.ts`: Home data. `FEATURED` (top 4 of `GAMES` by `best`) and `VAULT_STATS` are derived from `GAMES`/`CATS` at module scope; `RECENT_SCORES` and `TOP_TODAY` are static mock literals (no `Date.now()`/`Math.random()`: the Home is prerendered), shown labelled as demo data.
 - `scores.ts`: `seededScores(seed, count)` — deterministic LCG, so server and client render the same board (no hydration mismatch).
 - `session.ts`: `SessionUser`, `SavedScore`, keys `av:user:v1` / `av:scores:v1`, and storage helpers. Every localStorage access is in `try/catch`; if storage is blocked the session/scores live in memory only. The session is read in an effect **after mount**, never in a `useState` initializer.
 
