@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { AboutHero } from "@/components/about-hero";
+import { AboutDivider } from "@/components/about-divider";
 import { AboutPillars } from "@/components/about-pillars";
+import { AboutStatus } from "@/components/about-status";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = {
@@ -14,6 +16,8 @@ export default function AboutPage() {
     <div className="fade-in">
       <AboutHero />
       <AboutPillars />
+      <AboutStatus />
+      <AboutDivider />
       <ScrollReveal />
     </div>
   );
