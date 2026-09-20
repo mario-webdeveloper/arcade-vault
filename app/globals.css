@@ -107,6 +107,10 @@
 @keyframes blink {
   50% { opacity: 0; }
 }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 @keyframes typewriter {
   from { width: 0; }
   to { width: 22ch; }
@@ -555,6 +559,11 @@
 @utility blink {
   animation: blink 1.2s steps(1, end) infinite;
 }
+/* staggered row entrance: `both` keeps rows hidden during their delay, and
+   visible once the animation is turned off (reduced motion) */
+@utility rise {
+  animation: rise 360ms ease-out both;
+}
 /* "▸ PUNTUACIÓN GUARDADA_" is 22 characters: types itself out, then the caret blinks */
 @utility typewriter {
   animation: typewriter 1.6s steps(22) both, caret 0.8s steps(1) infinite;
@@ -589,6 +598,7 @@
   .flicker,
   .blink,
   .typewriter,
+  .rise,
   .fade-in,
   .slide-in,
   .game-arena .grid-floor,
