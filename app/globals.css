@@ -107,6 +107,13 @@
 @keyframes blink {
   50% { opacity: 0; }
 }
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 22ch; }
+}
+@keyframes caret {
+  50% { border-color: transparent; }
+}
 @keyframes bob {
   50% { transform: translateX(-50%) translateY(-6px); }
 }
@@ -548,6 +555,10 @@
 @utility blink {
   animation: blink 1.2s steps(1, end) infinite;
 }
+/* "▸ PUNTUACIÓN GUARDADA_" is 22 characters: types itself out, then the caret blinks */
+@utility typewriter {
+  animation: typewriter 1.6s steps(22) both, caret 0.8s steps(1) infinite;
+}
 @utility fade-in {
   animation: fadeIn 240ms ease-out;
 }
@@ -577,6 +588,7 @@
   .btn.pulse,
   .flicker,
   .blink,
+  .typewriter,
   .fade-in,
   .slide-in,
   .game-arena .grid-floor,

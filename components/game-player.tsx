@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { GameOverDialog } from "@/components/game-over-dialog";
 import { useSession } from "@/components/session-provider";
 
 const LIVES = 3; // decorative: there is no game engine yet
@@ -37,6 +38,12 @@ export function GamePlayer({ id, title }: { id: string; title: string }) {
     );
     return () => clearInterval(timer);
   }, [paused, over]);
+
+  const restart = () => {
+    setScore(0);
+    setPaused(false);
+    setOver(false);
+  };
 
   // Derived during render: no effect, so it can't fire more than once per level.
   const level = 1 + Math.floor(score / POINTS_PER_LEVEL);
@@ -117,6 +124,15 @@ export function GamePlayer({ id, title }: { id: string; title: string }) {
           <span>CARGA · 1MB</span>
         </div>
       </div>
+
+      {over && (
+        <GameOverDialog
+          gameId={id}
+          score={score}
+          initialName={name}
+          onRestart={restart}
+        />
+      )}
     </div>
   );
 }
