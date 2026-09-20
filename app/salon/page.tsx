@@ -16,7 +16,7 @@ export default function HallPage() {
       <HallOfFame />
 
       <div className="mt-8 text-center">
-        <Link href="/" className="btn lg">
+        <Link href="/biblioteca" className="btn lg">
           VOLVER A LA BIBLIOTECA
         </Link>
       </div>
