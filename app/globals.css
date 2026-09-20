@@ -182,6 +182,7 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
+    min-height: 44px;
     padding: 12px 20px;
     font-family: var(--pixel);
     font-size: 10px;
