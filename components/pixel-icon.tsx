@@ -9,10 +9,11 @@ const SHAPES: Record<PixelIconKind, ReactNode> = {
       <rect x="2" y="6" width="12" height="6" />
       <rect x="0" y="8" width="2" height="4" />
       <rect x="14" y="8" width="2" height="4" />
-      <rect x="3" y="8" width="2" height="2" />
-      <rect x="2" y="9" width="4" height="0.5" />
-      <rect x="11" y="7" width="1.5" height="1.5" />
-      <rect x="11" y="10" width="1.5" height="1.5" />
+      {/* d-pad and buttons are cut-outs: same colour as the body they'd vanish */}
+      <rect x="5" y="7.5" width="1" height="3" className="fill-bg" />
+      <rect x="4" y="8.5" width="3" height="1" className="fill-bg" />
+      <rect x="10.5" y="7.5" width="1.5" height="1.5" className="fill-bg" />
+      <rect x="10.5" y="9.5" width="1.5" height="1.5" className="fill-bg" />
     </>
   ),
   gratis: (
