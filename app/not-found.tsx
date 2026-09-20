@@ -10,7 +10,7 @@ export default function NotFound() {
         Ese juego no está en el vault. Puede que el cartucho se haya perdido o
         que la dirección esté mal.
       </p>
-      <Link href="/" className="btn lg">
+      <Link href="/biblioteca" className="btn lg">
         VOLVER AL VAULT
       </Link>
     </div>

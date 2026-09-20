@@ -1,17 +1,48 @@
-import { LibraryBrowser } from "@/components/library-browser";
+import Link from "next/link";
+import { GameCard } from "@/components/game-card";
+import { HomeActivity } from "@/components/home-activity";
+import { HomeClosing } from "@/components/home-closing";
+import { HomeFeatures } from "@/components/home-features";
+import { HomeHero } from "@/components/home-hero";
+import { HomeStats } from "@/components/home-stats";
+import { ScrollReveal } from "@/components/scroll-reveal";
+import { SectionHead } from "@/components/section-head";
+import { FEATURED, VAULT_STATS } from "@/lib/home";
 
 export default function Home() {
   return (
     <div className="fade-in">
-      <section className="mx-auto max-w-[1320px] px-4 pt-9 pb-4 text-center min-[721px]:px-8 min-[721px]:pt-16 min-[721px]:pb-8">
-        <h1 className="flicker bg-[image:linear-gradient(180deg,#fff_0%,var(--cyan)_60%,var(--magenta)_110%)] bg-clip-text font-pixel text-[length:clamp(28px,6vw,64px)] tracking-[0.06em] text-transparent drop-shadow-[0_0_12px_rgba(0,245,255,0.4)]">
-          ARCADE VAULT
-        </h1>
-        <div className="mt-[18px] font-pixel text-[length:clamp(10px,1.6vw,14px)] tracking-[0.2em] text-yellow">
-          INSERTA UNA MONEDA PARA JUGAR <span className="blink">_</span>
+      <HomeHero />
+      <HomeStats />
+      <HomeFeatures />
+      <section
+        aria-labelledby="catalogo-title"
+        data-reveal
+        className="mx-auto mt-16 max-w-[1320px] px-4 min-[721px]:mt-24 min-[721px]:px-8"
+      >
+        <SectionHead
+          id="catalogo-title"
+          kicker="CATÁLOGO"
+          title="JUEGOS EN EL VAULT"
+          color="cyan"
+        />
+        {/* Explicit columns instead of auto-fill: 4 cards would leave a lone card on
+            the second row at 3 columns (950–1250px). Same cards, same 280px minimum;
+            the 900px cap keeps the 2x2 cards from ballooning just below 1250px. */}
+        <div className="mx-auto grid max-w-[900px] grid-cols-1 gap-[22px] min-[621px]:grid-cols-2 min-[1250px]:max-w-none min-[1250px]:grid-cols-4">
+          {FEATURED.map((game) => (
+            <GameCard key={game.id} game={game} />
+          ))}
+        </div>
+        <div className="mt-10 text-center">
+          <Link href="/biblioteca" className="btn lg">
+            VER LOS {VAULT_STATS.games} JUEGOS <span aria-hidden="true">→</span>
+          </Link>
         </div>
       </section>
-      <LibraryBrowser />
+      <HomeActivity />
+      <HomeClosing />
+      <ScrollReveal />
     </div>
   );
 }

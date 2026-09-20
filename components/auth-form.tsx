@@ -26,12 +26,12 @@ export function AuthForm() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     signIn(String(data.get("usuario") ?? ""));
-    router.push("/");
+    router.push("/biblioteca");
   };
 
   const playAsGuest = () => {
     signOut();
-    router.push("/");
+    router.push("/biblioteca");
   };
 
   return (

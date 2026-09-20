@@ -126,7 +126,7 @@ export function GameOverDialog({ gameId, score, initialName, onRestart }: Props)
           <button type="button" className="btn" onClick={onRestart}>
             JUGAR DE NUEVO
           </button>
-          <Link href="/" className="btn magenta">
+          <Link href="/biblioteca" className="btn magenta">
             VOLVER AL VAULT
           </Link>
         </div>
