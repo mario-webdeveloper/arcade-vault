@@ -104,6 +104,9 @@
 @keyframes spinpix {
   to { transform: rotate(360deg); }
 }
+@keyframes blink {
+  50% { opacity: 0; }
+}
 @keyframes bob {
   50% { transform: translateX(-50%) translateY(-6px); }
 }
@@ -296,7 +299,9 @@
     content: "";
     position: absolute;
     inset: 0;
-    background-image:
+    /* prototype used `background-image:` here, which browsers drop as invalid
+       (position/size/repeat are not allowed in it): the snake never rendered */
+    background:
       radial-gradient(circle at 70% 50%, var(--magenta) 0 6px, transparent 7px),
       linear-gradient(90deg, var(--green) 0 40px, transparent 40px) 20% 50% / 200px 12px no-repeat,
       linear-gradient(90deg, var(--green) 0 12px, transparent 12px) calc(20% + 40px) calc(50% - 12px) / 12px 12px no-repeat,
@@ -540,6 +545,9 @@
 @utility flicker {
   animation: flicker 5s infinite steps(1, end);
 }
+@utility blink {
+  animation: blink 1.2s steps(1, end) infinite;
+}
 @utility fade-in {
   animation: fadeIn 240ms ease-out;
 }
@@ -568,6 +576,7 @@
   .av-bg::before,
   .btn.pulse,
   .flicker,
+  .blink,
   .fade-in,
   .slide-in,
   .game-arena .grid-floor,
