@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GameCard } from "@/components/game-card";
 import { HomeActivity } from "@/components/home-activity";
+import { HomeClosing } from "@/components/home-closing";
 import { HomeFeatures } from "@/components/home-features";
 import { HomeHero } from "@/components/home-hero";
 import { HomeStats } from "@/components/home-stats";
@@ -40,6 +41,7 @@ export default function Home() {
         </div>
       </section>
       <HomeActivity />
+      <HomeClosing />
       <ScrollReveal />
     </div>
   );
