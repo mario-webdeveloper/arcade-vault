@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GameCard } from "@/components/game-card";
+import { HomeActivity } from "@/components/home-activity";
 import { HomeFeatures } from "@/components/home-features";
 import { HomeHero } from "@/components/home-hero";
 import { HomeStats } from "@/components/home-stats";
@@ -38,6 +39,7 @@ export default function Home() {
           </Link>
         </div>
       </section>
+      <HomeActivity />
       <ScrollReveal />
     </div>
   );
