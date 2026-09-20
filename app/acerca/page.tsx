@@ -3,6 +3,7 @@ import { AboutHero } from "@/components/about-hero";
 import { AboutDivider } from "@/components/about-divider";
 import { AboutPillars } from "@/components/about-pillars";
 import { AboutStatus } from "@/components/about-status";
+import { ContactSection } from "@/components/contact-section";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function AboutPage() {
       <AboutPillars />
       <AboutStatus />
       <AboutDivider />
+      <ContactSection />
       <ScrollReveal />
     </div>
   );
