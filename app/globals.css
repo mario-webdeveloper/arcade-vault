@@ -131,6 +131,17 @@
 @keyframes pulse-led {
   50% { opacity: 0.35; transform: scale(0.85); }
 }
+/* contact form: applied with motion-safe: so reduced motion never sees them */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+@keyframes pxblink {
+  50% { opacity: 0.2; }
+}
 
 @layer components {
   /* ===== background: perspective grid + scanlines + vignette ===== */
@@ -267,16 +278,23 @@
   /* ===== form field ===== */
   .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
   .field label { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.16em; }
-  .field input {
-    height: 44px;
+  .field input,
+  .field textarea {
     background: var(--bg);
     border: 1px solid var(--line);
-    padding: 0 12px;
     outline: 0;
     font-family: var(--mono);
     transition: border-color 140ms, box-shadow 140ms;
   }
-  .field input:focus { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0, 245, 255, 0.35); }
+  .field input { height: 44px; padding: 0 12px; }
+  .field textarea { min-height: 140px; padding: 10px 12px; resize: vertical; line-height: 1.5; }
+  .field input:focus,
+  .field textarea:focus { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0, 245, 255, 0.35); }
+  /* invalid: the colour is a second signal; the message linked by aria-describedby is the first */
+  .field input[aria-invalid="true"],
+  .field textarea[aria-invalid="true"] { border-color: var(--magenta); }
+  .field input[aria-invalid="true"]:focus,
+  .field textarea[aria-invalid="true"]:focus { border-color: var(--magenta); box-shadow: 0 0 12px rgba(255, 0, 110, 0.35); }
 
   /* ===== cover art generators (pure CSS, no bitmaps) =====
      Ported verbatim from references/templates/styles.css.

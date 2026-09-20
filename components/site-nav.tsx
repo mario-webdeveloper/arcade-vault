@@ -20,8 +20,13 @@ const NAV_LINKS = [
   },
   {
     href: "/salon",
-    label: "Salón de la Fama",
+    label: "Salón",
     isActive: (path: string) => path === "/salon",
+  },
+  {
+    href: "/acerca",
+    label: "Acerca de",
+    isActive: (path: string) => path === "/acerca",
   },
 ] as const;
 
@@ -31,10 +36,10 @@ const LINK_ACTIVE =
   "text-cyan [text-shadow:0_0_8px_rgba(0,245,255,0.65)] after:absolute after:inset-x-3.5 after:bottom-1 after:h-0.5 after:bg-cyan after:shadow-[0_0_8px_var(--cyan),0_0_16px_var(--cyan)]";
 const LINK_IDLE = "text-ink-dim hover:text-ink";
 
-// Full bar needs ~1195px (1179px of content + scrollbar) for logo + 3 links +
-// credits + session button without wrapping; below 1200px it collapses to
+// Full bar needs ~1205px (1190px of content + 15px scrollbar) for logo + 4 links +
+// credits + session button without wrapping; below 1210px it collapses to
 // logo + session button + hamburger.
-const AUTH_BTN = "btn px-3 min-[1200px]:ml-4 min-[1200px]:px-5";
+const AUTH_BTN = "btn px-3 min-[1210px]:ml-4 min-[1210px]:px-5";
 const AUTH_BTN_GHOST = `${AUTH_BTN} ghost`;
 
 const PANEL_LINK =
@@ -61,7 +66,7 @@ export function SiteNav() {
     <>
       <nav
         aria-label="Principal"
-        className="sticky top-0 z-50 flex items-center gap-3 border-b border-line bg-[image:linear-gradient(180deg,rgba(10,10,15,0.92),rgba(10,10,15,0.78))] px-4 py-3 backdrop-blur-sm min-[1200px]:gap-6 min-[1200px]:px-8 min-[1200px]:py-3.5"
+        className="sticky top-0 z-50 flex items-center gap-3 border-b border-line bg-[image:linear-gradient(180deg,rgba(10,10,15,0.92),rgba(10,10,15,0.78))] px-4 py-3 backdrop-blur-sm min-[1210px]:gap-6 min-[1210px]:px-8 min-[1210px]:py-3.5"
       >
         <Link href="/" className="flex items-center gap-2.5">
           <span
@@ -73,7 +78,7 @@ export function SiteNav() {
           </span>
         </Link>
 
-        <div className="ml-8 hidden gap-1 min-[1200px]:flex">
+        <div className="ml-8 hidden gap-1 min-[1210px]:flex">
           {NAV_LINKS.map(({ href, label, isActive }) => {
             const active = isActive(pathname);
             return (
@@ -92,7 +97,7 @@ export function SiteNav() {
         <div className="flex-1" />
 
         {/* decorative: there is no credit economy yet */}
-        <div className="hidden items-center gap-2 font-pixel text-[9px] text-yellow min-[1200px]:flex">
+        <div className="hidden items-center gap-2 font-pixel text-[9px] text-yellow min-[1210px]:flex">
           <span
             aria-hidden="true"
             className="size-3.5 rounded-full bg-[image:radial-gradient(circle_at_35%_35%,#fff8b0,#f5ff00_60%,#b0b800)] shadow-[0_0_8px_var(--yellow)]"
@@ -117,7 +122,7 @@ export function SiteNav() {
 
         <button
           type="button"
-          className="btn ghost min-w-11 px-3 min-[1200px]:hidden"
+          className="btn ghost min-w-11 px-3 min-[1210px]:hidden"
           aria-label="Menú"
           aria-expanded={open}
           aria-controls="mobile-menu"
@@ -130,7 +135,7 @@ export function SiteNav() {
       <div
         aria-hidden="true"
         onClick={close}
-        className={`fixed inset-0 z-[55] bg-black/60 transition-opacity duration-[180ms] motion-reduce:transition-none min-[1200px]:hidden ${
+        className={`fixed inset-0 z-[55] bg-black/60 transition-opacity duration-[180ms] motion-reduce:transition-none min-[1210px]:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
@@ -138,7 +143,7 @@ export function SiteNav() {
         id="mobile-menu"
         aria-label="Menú móvil"
         inert={!open}
-        className={`fixed inset-y-0 right-0 z-[60] flex w-[min(320px,86vw)] flex-col gap-2 border-l border-line bg-bg-2 px-5 py-6 transition-transform duration-[220ms] ease-in-out motion-reduce:transition-none min-[1200px]:hidden ${
+        className={`fixed inset-y-0 right-0 z-[60] flex w-[min(320px,86vw)] flex-col gap-2 border-l border-line bg-bg-2 px-5 py-6 transition-transform duration-[220ms] ease-in-out motion-reduce:transition-none min-[1210px]:hidden ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
