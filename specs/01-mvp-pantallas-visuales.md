@@ -1,6 +1,6 @@
 # SPEC 01 — MVP visual: las 5 pantallas del portal
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** —
 > **Fecha:** 2026-09-19
 > **Objetivo:** Portar las 5 pantallas del prototipo `references/templates/` a Next.js App Router con fidelidad visual, sin implementar ningún juego.
