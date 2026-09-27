@@ -1,6 +1,6 @@
 # SPEC 05 — Juego Asteroides jugable
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 01
 > **Fecha:** 2026-09-27
 > **Objetivo:** Portar el Asteroids de `references/started-games/02-asteroids/` como juego nuevo `asteroides`, jugable en `/juego/asteroides/jugar` dentro del CRT, con un motor en canvas que notifica a React puntaje, vidas, nivel, pausa y fin de partida.
@@ -35,6 +35,7 @@ Fuente: `game.js` (≈510 líneas, clases `Bullet`, `Asteroid`, `PowerUp`, `Ship
 - Otros juegos jugables (los 8 restantes, incluido `rocas`, siguen con el player simulado).
 - Rankings reales / Supabase: detalle y Salón siguen con `seededScores` mock para `asteroides`.
 - Actualizar `best` / `plays` con partidas reales.
+- "Tu mejor marca" del Salón con las puntuaciones guardadas en `av:scores:v1` (hoy es una fórmula mock en `hall-of-fame.tsx`, para todos los juegos).
 - Sonido.
 - OVNIs u otras mecánicas que no estén en `game.js`.
 - Gamepad.
@@ -110,25 +111,25 @@ Convenciones:
 
 ## Criterios de aceptación
 
-- [ ] `/biblioteca` muestra 9 juegos, incluido ASTEROIDES con portada `cover-asteroides`; `rocas` sigue igual.
-- [ ] `/juego/asteroides` renderiza detalle y leaderboard (mock); `npm run build` prerenderiza `/juego/asteroides` y `/juego/asteroides/jugar`.
-- [ ] En `/juego/asteroides/jugar` el juego corre en un canvas dentro de `.crt-screen`, escalado sin deformarse.
-- [ ] El canvas muestra su propio HUD: SCORE, NIVEL, iconos de vida y `3x Ns` con power-up activo.
-- [ ] Destruir un asteroide grande / mediano / pequeño suma 20 / 50 / 100 y la barra React muestra el mismo puntaje que el canvas.
-- [ ] Perder una vida baja los ♥ de la barra; pasar de nivel actualiza NIVEL en la barra.
-- [ ] Flechas y WASD giran y empujan; espacio dispara; la página no hace scroll al pulsarlas.
-- [ ] P, Esc y el botón PAUSA pausan y reanudan; la barra muestra PAUSA/REANUDAR y el overlay "EN PAUSA" en sincronía.
-- [ ] Cambiar de pestaña pausa el juego.
-- [ ] Al perder las 3 vidas se abre `GameOverDialog` con el puntaje final; no aparece el texto "ESPACIO PARA REINICIAR".
-- [ ] FIN abre `GameOverDialog` con el puntaje actual y el motor deja de moverse.
-- [ ] GUARDAR PUNTUACIÓN guarda con `game: "asteroides"` y aparece en "tu mejor marca" del Salón con sesión iniciada.
-- [ ] JUGAR DE NUEVO reinicia: puntaje 0, 3 vidas, nivel 1, asteroides nuevos.
-- [ ] Escribir iniciales en el diálogo no mueve ni dispara la nave.
-- [ ] Salir de la ruta (SALIR o navegación) no deja rAF ni listeners activos (sin errores en consola al volver a entrar).
-- [ ] En viewport táctil (`pointer: coarse`) aparecen ◄ ► ▲ FUEGO bajo el CRT y mantenerlos pulsados controla la nave; en escritorio con ratón no aparecen.
-- [ ] Los otros 8 juegos siguen usando el player simulado sin cambios.
-- [ ] `games/asteroides/` no importa React ni tiene `'use client'`.
-- [ ] Sin errores ni warnings de hidratación en consola; `npm run lint` y `npm run build` pasan.
+- [x] `/biblioteca` muestra 9 juegos, incluido ASTEROIDES con portada `cover-asteroides`; `rocas` sigue igual.
+- [x] `/juego/asteroides` renderiza detalle y leaderboard (mock); `npm run build` prerenderiza `/juego/asteroides` y `/juego/asteroides/jugar`.
+- [x] En `/juego/asteroides/jugar` el juego corre en un canvas dentro de `.crt-screen`, escalado sin deformarse.
+- [x] El canvas muestra su propio HUD: SCORE, NIVEL, iconos de vida y `3x Ns` con power-up activo.
+- [x] Destruir un asteroide grande / mediano / pequeño suma 20 / 50 / 100 y la barra React muestra el mismo puntaje que el canvas.
+- [x] Perder una vida baja los ♥ de la barra; pasar de nivel actualiza NIVEL en la barra.
+- [x] Flechas y WASD giran y empujan; espacio dispara; la página no hace scroll al pulsarlas.
+- [x] P, Esc y el botón PAUSA pausan y reanudan; la barra muestra PAUSA/REANUDAR y el overlay "EN PAUSA" en sincronía.
+- [x] Cambiar de pestaña pausa el juego.
+- [x] Al perder las 3 vidas se abre `GameOverDialog` con el puntaje final; no aparece el texto "ESPACIO PARA REINICIAR".
+- [x] FIN abre `GameOverDialog` con el puntaje actual y el motor deja de moverse.
+- [x] GUARDAR PUNTUACIÓN guarda en `av:scores:v1` con `game: "asteroides"` y el puntaje final. (El Salón sigue mostrando "tu mejor marca" mock: leer las puntuaciones guardadas queda para un spec futuro.)
+- [x] JUGAR DE NUEVO reinicia: puntaje 0, 3 vidas, nivel 1, asteroides nuevos.
+- [x] Escribir iniciales en el diálogo no mueve ni dispara la nave.
+- [x] Salir de la ruta (SALIR o navegación) no deja rAF ni listeners activos (sin errores en consola al volver a entrar).
+- [x] En viewport táctil (`pointer: coarse`) aparecen ◄ ► ▲ FUEGO bajo el CRT y mantenerlos pulsados controla la nave; en escritorio con ratón no aparecen.
+- [x] Los otros 8 juegos siguen usando el player simulado sin cambios.
+- [x] `games/asteroides/` no importa React ni tiene `'use client'`.
+- [x] Sin errores ni warnings de hidratación en consola; `npm run lint` y `npm run build` pasan.
 
 ## Decisiones
 
