@@ -1,6 +1,6 @@
 # SPEC 04 — Integración base con Supabase
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 03
 > **Fecha:** 2026-09-27
 > **Objetivo:** Conectar la app al proyecto Supabase `blemopksbrerjdeubtdd` con clientes tipados de servidor y navegador, sin tablas ni auth, verificable con `GET /api/health`.
@@ -74,19 +74,19 @@ Convenciones:
 
 ## Criterios de aceptación
 
-- [ ] `package.json` lista `@supabase/supabase-js` y `@supabase/ssr` en `dependencies`, y `supabase` en `devDependencies`.
-- [ ] Existe `supabase/config.toml` y no existe `supabase/migrations/`.
-- [ ] El proyecto remoto sigue con 0 tablas en `public`.
-- [ ] `.env.example` contiene `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; `.env.local` no está en git.
-- [ ] `lib/supabase/server.ts` importa `server-only`.
-- [ ] Ningún archivo de `lib/supabase/` lee env vars a nivel de módulo.
-- [ ] Ambos clientes usan `<Database>` de `lib/supabase/database.types.ts`.
-- [ ] Con claves correctas, `GET /api/health` responde `200` con `{"ok":true,"latencyMs":<n>}`.
-- [ ] Sin `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `GET /api/health` responde `503` con `{"ok":false,"reason":"config"}`.
-- [ ] Sin `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `npm run build` pasa.
-- [ ] Con URL inválida, `GET /api/health` responde `503` con `{"ok":false,"reason":"unreachable"}`, y el detalle solo aparece en la consola del servidor.
-- [ ] `npm run lint` y `npm run build` pasan.
-- [ ] `/`, `/biblioteca`, `/salon`, `/acceso` y `/acerca` renderizan igual que antes.
+- [x] `package.json` lista `@supabase/supabase-js` y `@supabase/ssr` en `dependencies`, y `supabase` en `devDependencies`.
+- [x] Existe `supabase/config.toml` y no existe `supabase/migrations/`.
+- [x] El proyecto remoto sigue con 0 tablas en `public`.
+- [x] `.env.example` contiene `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; `.env.local` no está en git.
+- [x] `lib/supabase/server.ts` importa `server-only`.
+- [x] Ningún archivo de `lib/supabase/` lee env vars a nivel de módulo.
+- [x] Ambos clientes usan `<Database>` de `lib/supabase/database.types.ts`.
+- [x] Con claves correctas, `GET /api/health` responde `200` con `{"ok":true,"latencyMs":<n>}`.
+- [x] Sin `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `GET /api/health` responde `503` con `{"ok":false,"reason":"config"}`.
+- [x] Sin `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `npm run build` pasa.
+- [x] Con URL inválida, `GET /api/health` responde `503` con `{"ok":false,"reason":"unreachable"}`, y el detalle solo aparece en la consola del servidor.
+- [x] `npm run lint` y `npm run build` pasan.
+- [x] `/`, `/biblioteca`, `/salon`, `/acceso` y `/acerca` renderizan igual que antes.
 
 ## Decisiones
 
