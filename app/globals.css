@@ -434,6 +434,41 @@
     filter: drop-shadow(0 0 6px rgba(0, 245, 255, 0.4));
   }
 
+  /* Vector line-art, unlike the filled rocks of .cover-rocas: hollow rings for
+     asteroids, a cyan wedge for the ship, a trail of shots and a 3x power-up. */
+  .cover-asteroides {
+    background:
+      radial-gradient(circle at 15% 20%, #fff 0 1px, transparent 2px),
+      radial-gradient(circle at 62% 12%, #fff 0 1px, transparent 2px),
+      radial-gradient(circle at 90% 78%, #fff 0 1px, transparent 2px),
+      radial-gradient(circle at 34% 88%, #fff 0 1px, transparent 2px),
+      radial-gradient(circle at 50% 50%, #04122a, #000);
+  }
+  .cover-asteroides::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 76% 30%, transparent 0 25px, var(--magenta) 26px 28px, transparent 29px),
+      radial-gradient(circle at 22% 68%, transparent 0 16px, var(--yellow) 17px 19px, transparent 20px),
+      radial-gradient(circle at 84% 74%, transparent 0 9px, var(--magenta) 10px 12px, transparent 13px),
+      radial-gradient(circle at 20% 26%, transparent 0 7px, var(--green) 8px 9px, transparent 10px),
+      radial-gradient(circle at 57% 42%, var(--cyan) 0 2px, transparent 3px),
+      radial-gradient(circle at 64% 37%, var(--cyan) 0 2px, transparent 3px);
+    filter: drop-shadow(0 0 5px rgba(255, 0, 110, 0.55));
+  }
+  .cover-asteroides::before {
+    content: "";
+    position: absolute;
+    left: calc(47% - 11px);
+    top: calc(52% - 13px);
+    width: 22px;
+    height: 26px;
+    background: var(--cyan);
+    clip-path: polygon(50% 0, 100% 100%, 50% 76%, 0 100%);
+    transform: rotate(52deg); /* no glow: clip-path would cut a drop-shadow off */
+  }
+
   /* ===== CRT monitor + decorative in-screen arena (player) ===== */
   .crt {
     position: relative;
