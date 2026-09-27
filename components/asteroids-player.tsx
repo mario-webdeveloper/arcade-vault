@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { AsteroidsTouchControls } from "@/components/asteroids-touch-controls";
 import { GameOverDialog } from "@/components/game-over-dialog";
 import { useSession } from "@/components/session-provider";
 import {
   createAsteroidsGame,
+  type AsteroidsAction,
   type AsteroidsGame,
   type AsteroidsSnapshot,
 } from "@/games/asteroides/engine";
@@ -52,6 +54,10 @@ export function AsteroidsPlayer({ title }: { title: string }) {
   const restart = () => {
     setOver(false);
     gameRef.current?.restart();
+  };
+
+  const handleAction = (action: AsteroidsAction, down: boolean) => {
+    gameRef.current?.setAction(action, down);
   };
 
   const name = user?.name ?? "INVITADO";
@@ -143,6 +149,8 @@ export function AsteroidsPlayer({ title }: { title: string }) {
           <span>CARGA · 1MB</span>
         </div>
       </div>
+
+      <AsteroidsTouchControls onAction={handleAction} />
 
       {over ? (
         <GameOverDialog
