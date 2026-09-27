@@ -101,6 +101,17 @@ export const GAMES: Game[] = [
     best: 24,
     plays: "4.2K",
   },
+  {
+    id: "asteroides",
+    title: "ASTEROIDES",
+    short: "Gira, acelera y parte el cinturón en pedazos.",
+    long: "Tu nave vectorial deriva por un campo de asteroides sin fricción ni bordes. Dispara para partirlos en fragmentos más rápidos, atrapa el triple disparo cuando aparezca y limpia el sector para saltar al siguiente nivel.",
+    cat: "SHOOTER",
+    cover: "cover-asteroides",
+    color: "cyan",
+    best: 0,
+    plays: "0",
+  },
 ];
 
 export const CATS: readonly ["TODOS", ...Categoria[]] = [
