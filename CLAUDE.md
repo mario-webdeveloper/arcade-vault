@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Arcade Vault: online games platform where players compete for highest score (README is in Spanish). Current state: the visual MVP from `specs/01-mvp-pantallas-visuales.md` — five screens ported from the prototype in `references/templates/` — plus the landing from `specs/02-home-evolucionado.md` (Home at `/`, catalog moved to `/biblioteca`) and the About + Contact page from `specs/03-acerca-y-contacto.md` (`/acerca`), with mock data and a fake session. **No playable game, database, real auth or real rankings yet.** The only server code is the contact form's Server Action, which sends real email through Resend (see "Server code and environment").
+Arcade Vault: online games platform where players compete for highest score (README is in Spanish). Current state: the visual MVP from `specs/01-mvp-pantallas-visuales.md` — five screens ported from the prototype in `references/templates/` — plus the landing from `specs/02-home-evolucionado.md` (Home at `/`, catalog moved to `/biblioteca`) and the About + Contact page from `specs/03-acerca-y-contacto.md` (`/acerca`), with mock data and a fake session, and the Supabase base wiring from `specs/04-integracion-supabase.md` (clients + `/api/health`, no tables). **No playable game, database schema, real auth or real rankings yet.** Server code: the contact form's Server Action, which sends real email through Resend (see "Server code and environment"), and the `/api/health` Route Handler (see "Supabase").
 
 Spec-driven development: specs live in `specs/` and are written/implemented with the `/spec` and `/spec-impl` skills (`.claude/skills/`, from `Klerith/fernando-skills`). `/spec-impl` works on a `spec-NN-slug` branch and never commits on its own. New behavior goes in a new spec, not in code by surprise.
 
@@ -47,13 +47,25 @@ Imported by direct path (`@/components/...`); there are no barrel files. `'use c
 
 ### Server code and environment
 
-The first and only server-side code lives in `lib/`:
+Contact server code lives in `lib/` (the other server code is the Supabase Route Handler, see "Supabase"):
 
 - `contact-action.ts` (`'use server'`): `sendContact(prev, formData)`. Order: honeypot `sitio_web` filled → returns `sent` without calling Resend; `validateContact` → `invalid`; **awaits** `sendNotice` → `failed` (`reason: "config" | "delivery"`); the acknowledgement goes in `after()` so it can never sink a message that reached the team. A `'use server'` file may only export async functions.
 - `mailer.ts` (`import "server-only"`): Resend SDK (`emails.send` returns `{ data, error }`, option is `replyTo`), HTML-escapes name/email/message, never throws from `sendReceipt`. Env vars are read **inside** functions, never at module scope, so a missing key can't break the import or the build. Details for the visitor go to the UI in plain words; technical detail goes to `console.error`, never to the screen.
 - Env vars (`.env.example` is versioned, `.env.local` is not; `.gitignore` has `!.env.example`): `RESEND_API_KEY`, `CONTACT_FROM_EMAIL` (default `onboarding@resend.dev`), `CONTACT_TO_EMAIL`, optional `CONTACT_PUBLIC_EMAIL` (read at build: `/acerca` is static, changing it needs a rebuild). Restart `next dev` after editing `.env.local`.
 - Until a domain is verified in Resend, `onboarding@resend.dev` only delivers to the account owner: `CONTACT_TO_EMAIL` must be that address and the acknowledgement to anyone else will fail (logged, harmless).
 - Out of scope, by design: rate limit, captcha, Zod, message storage.
+
+### Supabase
+
+Remote project `blemopksbrerjdeubtdd` (`.mcp.json` points to it). Base wiring only: **0 tables in `public`**, no auth, no `proxy.ts`, no local Docker stack, no migrations.
+
+- `lib/supabase/server.ts` (`import "server-only"`): async `createClient()` with `createServerClient<Database>` over `await cookies()` (`getAll` / `setAll`; `setAll` in `try/catch` because a Server Component can't write cookies; its second `headers` argument is ignored until auth arrives). Also exports `readSupabaseEnv()` → `{ url, key } | null`.
+- `lib/supabase/client.ts`: `createClient()` with `createBrowserClient<Database>`. No importers yet.
+- `lib/supabase/database.types.ts`: generated, never edit by hand. Regenerate after any schema change with MCP `generate_typescript_types` or `npm run db:types` (needs `npx supabase login`).
+- Env vars are read **inside** `createClient()`, never at module scope; missing vars throw a generic error. Import by direct path (`@/lib/supabase/server`), no barrel.
+- `app/api/health/route.ts`: `GET` → `await connection()` (request time, never prerendered), then pings `${URL}/auth/v1/health` with `apikey` header (5 s timeout). `200 {ok:true, latencyMs}`; missing env `503 {ok:false, reason:"config"}`; network error / non-2xx `503 {ok:false, reason:"unreachable"}` with detail only in `console.error`. `Cache-Control: no-store`. Public: never put URLs, keys or error messages in the body.
+- Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_…`, not the legacy anon key). No secret key / admin client yet.
+- `supabase/` from `npx supabase init`: `config.toml` (its `project_id` is the local stack name, not the remote ref) and `.gitignore` (`.temp`, `.branches`). `supabase` CLI is a devDependency.
 
 ## Skills
 
