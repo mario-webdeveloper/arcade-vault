@@ -1,6 +1,6 @@
 # SPEC 06 — Leaderboard real de Asteroides en Supabase
 
-> **Estado:** Aprobado
+> **Estado:** Implementado
 > **Depende de:** SPEC 04, SPEC 05
 > **Fecha:** 2026-09-27
 > **Objetivo:** Crear en Supabase las tablas `games` (solo `asteroides`) y `scores`, guardar puntuaciones de Asteroides con un RPC validado y mostrar su ranking real (top 10 por nombre, mejor marca y partidas) en detalle, Salón, catálogo y diálogo de fin de partida.
@@ -100,23 +100,23 @@ Convenciones:
 
 ## Criterios de aceptación
 
-- [ ] `public` tiene exactamente `games` y `scores`; `games` tiene una fila: `asteroides` con `max_score = 1000000`.
-- [ ] RLS activo en ambas tablas; `insert` directo a `scores` con la publishable key es rechazado.
-- [ ] `submit_score` rechaza juego inexistente, nombre vacío o de 11+ caracteres, score negativo y score > 1.000.000.
-- [ ] `get_advisors` (security) no reporta problemas en las tablas, vista o función nuevas, salvo los WARN 0028/0029 (`anon`/`authenticated_security_definer_function_executable`) en `submit_score`, esperados por diseño.
-- [ ] `database.types.ts` incluye `games`, `scores`, `leaderboard` y `submit_score`.
-- [ ] Ningún archivo nuevo lee env vars a nivel de módulo; `public.ts` y `leaderboard.ts` importan `server-only`.
-- [ ] `npm run build` prerenderiza `/juego/asteroides`, `/salon` y `/biblioteca` (marcadas ISR, no dinámicas).
-- [ ] Guardar una partida de asteroides muestra "PUESTO #N" y la fila aparece en `scores`.
-- [ ] Tras guardar, al recargar `/juego/asteroides`, `/salon` y `/biblioteca` se ve el nuevo dato sin esperar 60 s.
-- [ ] El leaderboard de asteroides muestra máx. 10 filas y un nombre aparece una sola vez (con su mejor marca).
-- [ ] "Partidas" = número de filas en `scores` para `asteroides`; "Mejor global" = máximo score.
-- [ ] Sin filas, el leaderboard dice "SIN PUNTUACIONES TODAVÍA" y "Mejor global" muestra `0`.
-- [ ] Con Supabase inaccesible (URL inválida), las tres rutas renderizan, el leaderboard dice "RANKING NO DISPONIBLE", la mejor marca muestra `—`, y el detalle solo aparece en consola del servidor.
-- [ ] Con el RPC fallando, el diálogo muestra "GUARDADO SOLO EN ESTE EQUIPO" y REINTENTAR; la puntuación sí queda en `av:scores:v1`.
-- [ ] "Tu mejor marca" de asteroides en `/salon` coincide con la mejor puntuación local guardada.
-- [ ] Los otros 8 juegos muestran exactamente lo mismo que antes (mock), y la Home no cambia.
-- [ ] Sin errores ni warnings de hidratación; `npm run lint` y `npm run build` pasan.
+- [x] `public` tiene exactamente `games` y `scores`; `games` tiene una fila: `asteroides` con `max_score = 1000000`.
+- [x] RLS activo en ambas tablas; `insert` directo a `scores` con la publishable key es rechazado.
+- [x] `submit_score` rechaza juego inexistente, nombre vacío o de 11+ caracteres, score negativo y score > 1.000.000.
+- [x] `get_advisors` (security) no reporta problemas en las tablas, vista o función nuevas, salvo los WARN 0028/0029 (`anon`/`authenticated_security_definer_function_executable`) en `submit_score`, esperados por diseño.
+- [x] `database.types.ts` incluye `games`, `scores`, `leaderboard` y `submit_score`.
+- [x] Ningún archivo nuevo lee env vars a nivel de módulo; `public.ts` y `leaderboard.ts` importan `server-only`.
+- [x] `npm run build` prerenderiza `/juego/asteroides`, `/salon` y `/biblioteca` (marcadas ISR, no dinámicas).
+- [x] Guardar una partida de asteroides muestra "PUESTO #N" y la fila aparece en `scores`.
+- [x] Tras guardar, al recargar `/juego/asteroides`, `/salon` y `/biblioteca` se ve el nuevo dato sin esperar 60 s.
+- [x] El leaderboard de asteroides muestra máx. 10 filas y un nombre aparece una sola vez (con su mejor marca).
+- [x] "Partidas" = número de filas en `scores` para `asteroides`; "Mejor global" = máximo score.
+- [x] Sin filas, el leaderboard dice "SIN PUNTUACIONES TODAVÍA" y "Mejor global" muestra `0`.
+- [x] Con Supabase inaccesible (URL inválida), las tres rutas renderizan, el leaderboard dice "RANKING NO DISPONIBLE", la mejor marca muestra `—`, y el detalle solo aparece en consola del servidor.
+- [x] Con el RPC fallando, el diálogo muestra "GUARDADO SOLO EN ESTE EQUIPO" y REINTENTAR; la puntuación sí queda en `av:scores:v1`.
+- [x] "Tu mejor marca" de asteroides en `/salon` coincide con la mejor puntuación local guardada.
+- [x] Los otros 8 juegos muestran exactamente lo mismo que antes (mock), y la Home no cambia.
+- [x] Sin errores ni warnings de hidratación; `npm run lint` y `npm run build` pasan.
 
 ## Decisiones
 
