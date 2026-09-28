@@ -3,7 +3,15 @@ import { notFound } from "next/navigation";
 import { GameCover } from "@/components/game-cover";
 import { Leaderboard } from "@/components/leaderboard";
 import { GAMES, getGame } from "@/lib/games";
-import { seededScores } from "@/lib/scores";
+import { getGameStats, getLeaderboard } from "@/lib/leaderboard";
+import { seededScores, type ScoreRow } from "@/lib/scores";
+
+// ISR: the real ranking (asteroides) refreshes at most every 60 s, and right
+// away after a save through revalidatePath.
+export const revalidate = 60;
+
+// Only this game has a real ranking in Supabase; the rest keep the mock board.
+const REAL_GAME = "asteroides";
 
 export function generateStaticParams() {
   return GAMES.map(({ id }) => ({ id }));
@@ -20,8 +28,20 @@ export default async function GameDetailPage(props: PageProps<"/juego/[id]">) {
   const game = getGame(id);
   if (!game) notFound();
 
-  // Deterministic, so server render and reloads always show the same board.
-  const scores = seededScores(id.length * 17 + 3, 10);
+  let scores: ScoreRow[] | null;
+  let plays: string;
+  let best: string;
+  if (id === REAL_GAME) {
+    const [rows, stats] = await Promise.all([getLeaderboard(id), getGameStats(id)]);
+    scores = rows;
+    plays = stats ? stats.plays.toLocaleString("es-ES") : "—";
+    best = stats ? stats.best.toLocaleString("es-ES") : "—";
+  } else {
+    // Deterministic, so server render and reloads always show the same board.
+    scores = seededScores(id.length * 17 + 3, 10);
+    plays = game.plays;
+    best = game.best.toLocaleString("es-ES");
+  }
 
   return (
     <div className="fade-in mx-auto my-6 grid max-w-[1320px] grid-cols-1 gap-8 px-4 min-[721px]:my-12 min-[721px]:px-8 min-[901px]:grid-cols-[1.4fr_1fr]">
@@ -47,12 +67,12 @@ export default async function GameDetailPage(props: PageProps<"/juego/[id]">) {
           <dl className="mt-2 grid grid-cols-3 gap-px border border-line bg-line">
             <div className="bg-bg-2 p-3.5">
               <dt className={STAT_LABEL}>Partidas</dt>
-              <dd className={`${STAT_VALUE} text-cyan [text-shadow:0_0_6px_rgba(0,245,255,0.5)]`}>{game.plays}</dd>
+              <dd className={`${STAT_VALUE} text-cyan [text-shadow:0_0_6px_rgba(0,245,255,0.5)]`}>{plays}</dd>
             </div>
             <div className="bg-bg-2 p-3.5">
               <dt className={STAT_LABEL}>Mejor global</dt>
               <dd className={`${STAT_VALUE} text-magenta [text-shadow:0_0_6px_rgba(255,0,110,0.5)]`}>
-                {game.best.toLocaleString("es-ES")}
+                {best}
               </dd>
             </div>
             <div className="bg-bg-2 p-3.5">

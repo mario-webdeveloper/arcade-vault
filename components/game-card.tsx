@@ -22,7 +22,13 @@ const CARD =
   "hover:border-cyan hover:shadow-[0_18px_40px_-10px_rgba(0,245,255,0.4),0_0_0_1px_rgba(0,245,255,0.3)] hover:before:opacity-50 motion-safe:hover:[transform:translateY(-6px)_rotateX(2deg)_rotateY(-2deg)] " +
   "focus-visible:border-cyan focus-visible:shadow-[0_18px_40px_-10px_rgba(0,245,255,0.4),0_0_0_1px_rgba(0,245,255,0.3)]";
 
-export function GameCard({ game }: { game: Game }) {
+type Props = {
+  game: Game;
+  /** Real best score; omitted = the static game.best, null = could not be read. */
+  best?: number | null;
+};
+
+export function GameCard({ game, best = game.best }: Props) {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const canTilt = useRef(false);
 
@@ -68,7 +74,7 @@ export function GameCard({ game }: { game: Game }) {
           <div className="flex flex-col font-mono text-[10px] uppercase tracking-[0.08em] text-ink-faint">
             <span>MEJOR PUNTUACIÓN</span>
             <b className="font-pixel text-[12px] font-normal tracking-[0.06em] text-yellow [text-shadow:0_0_6px_rgba(245,255,0,0.6)]">
-              {game.best.toLocaleString("es-ES")}
+              {best === null ? "—" : best.toLocaleString("es-ES")}
             </b>
           </div>
           {/* looks like a button, but the whole card is the single link */}

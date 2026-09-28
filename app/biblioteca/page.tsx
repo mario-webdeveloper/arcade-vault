@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LibraryBrowser } from "@/components/library-browser";
+import { getGameStats } from "@/lib/leaderboard";
 
 export const metadata: Metadata = {
   title: "Biblioteca · Arcade Vault",
@@ -7,7 +8,14 @@ export const metadata: Metadata = {
     "Catálogo de juegos retro de Arcade Vault: busca por nombre y filtra por categoría.",
 };
 
-export default function LibraryPage() {
+// ISR: the real best score refreshes at most every 60 s, and right away after
+// a save through revalidatePath.
+export const revalidate = 60;
+
+export default async function LibraryPage() {
+  // Only asteroides has real stats; the other cards keep their static best.
+  const asteroides = await getGameStats("asteroides");
+
   return (
     <div className="fade-in">
       <section className="mx-auto max-w-[1320px] px-4 pt-9 pb-4 text-center min-[721px]:px-8 min-[721px]:pt-16 min-[721px]:pb-8">
@@ -18,7 +26,7 @@ export default function LibraryPage() {
           INSERTA UNA MONEDA PARA JUGAR <span className="blink">_</span>
         </div>
       </section>
-      <LibraryBrowser />
+      <LibraryBrowser realStats={{ asteroides }} />
     </div>
   );
 }

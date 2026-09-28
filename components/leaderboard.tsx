@@ -7,7 +7,10 @@ const MEDAL = [
   "text-bronze [text-shadow:0_0_6px_rgba(217,122,58,0.5)]",
 ];
 
-export function Leaderboard({ rows }: { rows: ScoreRow[] }) {
+const NOTICE = "px-4 py-8 text-center font-pixel text-[10px] leading-[1.8] tracking-[0.12em]";
+
+// rows: null = the ranking could not be read; [] = no scores yet.
+export function Leaderboard({ rows }: { rows: ScoreRow[] | null }) {
   return (
     <section
       aria-labelledby="leaderboard-title"
@@ -19,31 +22,37 @@ export function Leaderboard({ rows }: { rows: ScoreRow[] }) {
       >
         MEJORES PUNTUACIONES
       </h2>
-      <ol>
-        {rows.map((row, i) => (
-          <li
-            key={row.rank}
-            className="grid grid-cols-[36px_1fr_110px] items-center gap-2.5 border-b border-line-2 px-4 py-2.5 font-mono text-[13px]"
-          >
-            <div
-              className={`font-pixel text-[11px] ${MEDAL[i] ?? "text-ink-faint"}`}
+      {rows === null ? (
+        <p className={`${NOTICE} text-magenta`}>RANKING NO DISPONIBLE</p>
+      ) : rows.length === 0 ? (
+        <p className={`${NOTICE} text-ink-faint`}>SIN PUNTUACIONES TODAVÍA</p>
+      ) : (
+        <ol>
+          {rows.map((row, i) => (
+            <li
+              key={row.rank}
+              className="grid grid-cols-[36px_1fr_110px] items-center gap-2.5 border-b border-line-2 px-4 py-2.5 font-mono text-[13px]"
             >
-              #{String(row.rank).padStart(2, "0")}
-            </div>
-            <div className="text-ink">
-              {row.name}
-              <div className="text-[10px] tracking-[0.1em] text-ink-faint">
-                {row.date}
+              <div
+                className={`font-pixel text-[11px] ${MEDAL[i] ?? "text-ink-faint"}`}
+              >
+                #{String(row.rank).padStart(2, "0")}
               </div>
-            </div>
-            <div
-              className={`text-right font-pixel text-[12px] ${MEDAL[i] ?? "text-cyan"}`}
-            >
-              {row.score.toLocaleString("es-ES")}
-            </div>
-          </li>
-        ))}
-      </ol>
+              <div className="text-ink">
+                {row.name}
+                <div className="text-[10px] tracking-[0.1em] text-ink-faint">
+                  {row.date}
+                </div>
+              </div>
+              <div
+                className={`text-right font-pixel text-[12px] ${MEDAL[i] ?? "text-cyan"}`}
+              >
+                {row.score.toLocaleString("es-ES")}
+              </div>
+            </li>
+          ))}
+        </ol>
+      )}
     </section>
   );
 }

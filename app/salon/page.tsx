@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { HallOfFame } from "@/components/hall-of-fame";
+import { getLeaderboard } from "@/lib/leaderboard";
 
-export default function HallPage() {
+// ISR: the real board refreshes at most every 60 s, and right away after a
+// save through revalidatePath.
+export const revalidate = 60;
+
+export default async function HallPage() {
+  // Only asteroides has a real ranking; the other boards stay mock.
+  const asteroides = await getLeaderboard("asteroides");
+
   return (
     <div className="fade-in mx-auto mt-8 mb-20 max-w-[1200px] px-4 min-[721px]:px-8">
       <header className="mb-7 text-center">
@@ -13,7 +21,7 @@ export default function HallPage() {
         </p>
       </header>
 
-      <HallOfFame />
+      <HallOfFame realBoards={{ asteroides }} />
 
       <div className="mt-8 text-center">
         <Link href="/biblioteca" className="btn lg">

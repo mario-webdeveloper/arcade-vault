@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { GameCard } from "@/components/game-card";
 import { CATS, GAMES } from "@/lib/games";
+import type { GameStats } from "@/lib/leaderboard";
 
 const DIACRITICS = /\p{M}/gu;
 
@@ -14,7 +15,12 @@ function normalize(text: string): string {
 // Titles never change, so their search keys are computed once per module.
 const INDEX = GAMES.map((game) => ({ game, key: normalize(game.title) }));
 
-export function LibraryBrowser() {
+type Props = {
+  /** Real stats read on the server, by game id; null = could not be read. */
+  realStats: Record<string, GameStats | null>;
+};
+
+export function LibraryBrowser({ realStats }: Props) {
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState<(typeof CATS)[number]>("TODOS");
 
@@ -66,7 +72,11 @@ export function LibraryBrowser() {
 
       <div className="mx-auto mt-8 mb-20 grid max-w-[1320px] grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-[22px] px-4 min-[721px]:px-8">
         {filtered.map(({ game }) => (
-          <GameCard key={game.id} game={game} />
+          <GameCard
+            key={game.id}
+            game={game}
+            best={game.id in realStats ? (realStats[game.id]?.best ?? null) : game.best}
+          />
         ))}
         {filtered.length === 0 && (
           <div
