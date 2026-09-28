@@ -44,6 +44,29 @@ export function writeStoredUser(user: SessionUser | null): void {
   }
 }
 
+/** Highest stored score for a game, or null (none saved or storage unavailable). */
+export function readBestStoredScore(game: string): SavedScore | null {
+  try {
+    const raw = localStorage.getItem(SCORES_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return null;
+    let best: SavedScore | null = null;
+    for (const item of parsed as Partial<SavedScore>[]) {
+      if (
+        item?.game === game &&
+        typeof item.score === "number" &&
+        typeof item.at === "number" &&
+        (!best || item.score > best.score)
+      ) {
+        best = { game, score: item.score, name: String(item.name ?? ""), at: item.at };
+      }
+    }
+    return best;
+  } catch {
+    return null;
+  }
+}
+
 /** Returns false when the score could not be persisted. */
 export function appendStoredScore(entry: SavedScore): boolean {
   try {

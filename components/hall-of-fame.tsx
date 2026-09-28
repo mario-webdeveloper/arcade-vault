@@ -1,9 +1,19 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useSession } from "@/components/session-provider";
 import { GAMES } from "@/lib/games";
 import { seededScores, type ScoreRow } from "@/lib/scores";
+import { readBestStoredScore, type SavedScore } from "@/lib/session";
+
+// Games whose "your best mark" comes from av:scores:v1 instead of the mock formula.
+const LOCAL_BEST_GAME = "asteroides";
+
+// dd/mm/aaaa; only runs after mount, so the local zone is fine.
+function formatDate(at: number) {
+  const d = new Date(at);
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+}
 
 // Seeded, so the board is identical on server and client. Built once per module.
 const BOARDS: Record<string, ScoreRow[]> = Object.fromEntries(
@@ -68,17 +78,44 @@ function PodiumSlot({ row, tone }: { row: ScoreRow; tone: Tone }) {
   );
 }
 
-export function HallOfFame() {
+type Props = {
+  /** Real boards read on the server, by game id; null = could not be read. */
+  realBoards: Record<string, ScoreRow[] | null>;
+};
+
+export function HallOfFame({ realBoards }: Props) {
   const { user } = useSession();
   const [gameId, setGameId] = useState(GAMES[0].id);
+  // Read after mount (never during render) so hydration always matches.
+  const [localBest, setLocalBest] = useState<SavedScore | null>(null);
+
+  useEffect(() => {
+    // localStorage is only readable after mount; the extra render is intended.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLocalBest(readBestStoredScore(LOCAL_BEST_GAME));
+  }, []);
 
   const game = GAMES.find((g) => g.id === gameId) ?? GAMES[0];
-  const rows = BOARDS[game.id];
+  const isReal = game.id in realBoards;
+  const board = isReal ? realBoards[game.id] : BOARDS[game.id];
+  const rows = board ?? [];
   const [first, second, third] = rows;
 
-  // Same mock formula as the prototype for "your best mark".
-  const youRank = 8 + (game.id.length % 4);
-  const youScore = rows[5].score - 2400;
+  let youRank: string;
+  let youScore: string;
+  let youDate: string;
+  if (game.id === LOCAL_BEST_GAME) {
+    // Rank only when the mark would fit inside the loaded board; otherwise "—".
+    const pos = localBest && board ? rows.filter((r) => r.score > localBest.score).length + 1 : 0;
+    youRank = pos > 0 && pos <= rows.length ? String(pos).padStart(2, "0") : "—";
+    youScore = localBest ? localBest.score.toLocaleString("es-ES") : "—";
+    youDate = localBest ? formatDate(localBest.at) : "—";
+  } else {
+    // Same mock formula as the prototype for "your best mark".
+    youRank = String(8 + (game.id.length % 4)).padStart(2, "0");
+    youScore = (rows[5].score - 2400 || 9999).toLocaleString("es-ES");
+    youDate = "11/05/2026";
+  }
 
   return (
     <>
@@ -100,12 +137,14 @@ export function HallOfFame() {
         ))}
       </div>
 
-      {/* visual order: silver, gold, bronze */}
-      <div className="mb-6 grid grid-cols-1 items-end gap-3.5 min-[721px]:grid-cols-[1fr_1.2fr_1fr]">
-        <PodiumSlot row={second} tone="silver" />
-        <PodiumSlot row={first} tone="gold" />
-        <PodiumSlot row={third} tone="bronze" />
-      </div>
+      {/* visual order: silver, gold, bronze; an empty place keeps its column */}
+      {first && (
+        <div className="mb-6 grid grid-cols-1 items-end gap-3.5 min-[721px]:grid-cols-[1fr_1.2fr_1fr]">
+          {second ? <PodiumSlot row={second} tone="silver" /> : <div aria-hidden="true" />}
+          <PodiumSlot row={first} tone="gold" />
+          {third ? <PodiumSlot row={third} tone="bronze" /> : <div aria-hidden="true" />}
+        </div>
+      )}
 
       <div className="border border-line bg-bg-2">
         <table className="w-full table-fixed border-collapse font-mono text-[12px] min-[721px]:text-[13px]">
@@ -127,6 +166,16 @@ export function HallOfFame() {
             </tr>
           </thead>
           <tbody>
+            {rows.length === 0 && (
+              <tr key={`empty-${game.id}`} className="rise border-b border-line-2">
+                <td
+                  colSpan={4}
+                  className={`px-3 py-8 text-center font-pixel text-[10px] tracking-[0.12em] min-[721px]:px-[18px] ${board === null ? "text-magenta" : "text-ink-faint"}`}
+                >
+                  {board === null ? "RANKING NO DISPONIBLE" : "SIN PUNTUACIONES TODAVÍA"}
+                </td>
+              </tr>
+            )}
             {rows.map((row, i) => (
               // keyed by game so switching tabs replays the staggered entrance
               <tr
@@ -161,15 +210,15 @@ export function HallOfFame() {
                   <td
                     className={`${TD_YOU} border-l-[3px] border-yellow font-pixel text-[11px] text-yellow`}
                   >
-                    #{String(youRank).padStart(2, "0")}
+                    {youRank === "—" ? youRank : `#${youRank}`}
                   </td>
                   <td className={`${TD_YOU} text-yellow`}>{user.name}</td>
                   <td
                     className={`${TD_YOU} font-pixel text-[12px] text-yellow [text-shadow:0_0_6px_rgba(245,255,0,0.5)]`}
                   >
-                    {(youScore || 9999).toLocaleString("es-ES")}
+                    {youScore}
                   </td>
-                  <td className={`${TD_YOU} text-ink-faint`}>11/05/2026</td>
+                  <td className={`${TD_YOU} text-ink-faint`}>{youDate}</td>
                 </tr>
               </Fragment>
             )}
